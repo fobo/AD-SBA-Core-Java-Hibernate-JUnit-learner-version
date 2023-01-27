@@ -17,4 +17,9 @@ public class CourseService  {
 		return null;
 	}
 
+	public void createCourse(Course course) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

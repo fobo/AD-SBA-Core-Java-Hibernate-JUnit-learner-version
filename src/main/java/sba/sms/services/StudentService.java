@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import sba.sms.models.Course;
+import sba.sms.models.Student;
 
 public class StudentService  {
 
@@ -25,6 +26,11 @@ public class StudentService  {
 	public List<Course> getStudentCourses(String email) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void createStudent(Student student) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
