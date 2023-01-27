@@ -3,6 +3,7 @@ package sba.sms.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import sba.sms.dao.CourseI;
 import sba.sms.models.Course;
 
 /*TODO:
@@ -14,14 +15,14 @@ import sba.sms.models.Course;
  * commit to DB
  * 
  */
-public class CourseService  {
+public class CourseService implements CourseI {
 
 	public List<Course> getAllCourses() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Logger getCourseById(int courseId) {
+	public Course getCourseById(int courseId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

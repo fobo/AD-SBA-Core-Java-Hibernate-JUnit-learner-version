@@ -2,6 +2,8 @@ package sba.sms.services;
 
 import java.util.List;
 import java.util.logging.Logger;
+
+import sba.sms.dao.StudentI;
 import sba.sms.models.Course;
 import sba.sms.models.Student;
 /*TODO:
@@ -14,7 +16,7 @@ import sba.sms.models.Student;
  * 
  */
 
-public class StudentService  {
+public class StudentService implements StudentI {
 
 
 
@@ -28,7 +30,7 @@ public class StudentService  {
 		return false;
 	}
 
-	public Course getStudentByEmail(String email) {
+	public Student getStudentByEmail(String email) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -39,6 +41,12 @@ public class StudentService  {
 	}
 
 	public List<Course> getStudentCourses(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Student> getAllStudents() {
 		// TODO Auto-generated method stub
 		return null;
 	}

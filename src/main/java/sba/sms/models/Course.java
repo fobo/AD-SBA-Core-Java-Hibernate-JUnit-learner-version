@@ -5,8 +5,6 @@ import java.util.List;
 import lombok.*;
 
 
-@AllArgsConstructor
-@RequiredArgsConstructor
 @Setter
 @Getter
 @ToString
@@ -26,6 +24,22 @@ public class Course {
 	private String instructor;
 	private List<Student> students;
 	//constructors
+	public Course() {
+	}
+	
+	
+	public Course(int id, String name, String instructor, List<Student> students) {
+		this.id = id;
+		this.name = name;
+		this.instructor = instructor;
+		this.students = students;
+	}
+
+
+	public Course(String name, String instructor) {
+		this.name = name;
+		this.instructor = instructor;
+	}
 
 
 	//other methods
