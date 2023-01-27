@@ -4,7 +4,7 @@ import sba.sms.models.Course;
 import sba.sms.models.Student;
 
 import java.util.List;
-
+//Shouldn't need to add anything here
 public interface StudentI {
     List<Student> getAllStudents();
     void createStudent(Student student);

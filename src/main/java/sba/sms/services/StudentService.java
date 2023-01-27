@@ -4,7 +4,15 @@ import java.util.List;
 import java.util.logging.Logger;
 import sba.sms.models.Course;
 import sba.sms.models.Student;
-
+/*TODO:
+ * Implement StudentI
+ * fill out methods (dont forget to try/catch/finally)
+ * Set session
+ * Set transaction
+ * begin and CRUD transaction. REFERENCE: https://www.baeldung.com/hibernate-save-persist-update-merge-saveorupdate
+ * commit to DB
+ * 
+ */
 
 public class StudentService  {
 

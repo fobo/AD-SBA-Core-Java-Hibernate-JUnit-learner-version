@@ -5,7 +5,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-
+//This file is done I think? No changes need to be made here.
 public class HibernateUtil {
     private HibernateUtil() {
         // Utility classes should not have public constructors

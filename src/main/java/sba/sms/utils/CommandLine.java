@@ -4,7 +4,7 @@ import sba.sms.models.Course;
 import sba.sms.models.Student;
 import sba.sms.services.CourseService;
 import sba.sms.services.StudentService;
-
+//This generates the data for the DB, don't touch anything except for testing! (make sure to keep the original first)
 public class CommandLine {
     private CommandLine() {
         // Utility classes should not have public constructors
