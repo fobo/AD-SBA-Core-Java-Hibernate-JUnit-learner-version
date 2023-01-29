@@ -1,5 +1,6 @@
 package sba.sms.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -111,8 +112,14 @@ public class StudentService implements StudentI {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
+		List<Course> courseList = new ArrayList<>();
+		Query query = session.createNamedQuery("SELECT course.id, course.name, course.instructor FROM course join student_courses on course.id = student_courses.courses_id join student on student.email = student_courses.student_email where student.email = :email");
+		query.setParameter("email", email);
+		courseList = query.getResultList();
+		transaction.commit();
+		session.close();
 		//just found this: https://www.tutorialspoint.com/hibernate/hibernate_native_sql.htm come to it later...
-		return null;
+		return courseList;
 	}
 
 	@Override
@@ -123,7 +130,16 @@ public class StudentService implements StudentI {
 		 * results commit transaction catch errors return data
 		 */
 		// TODO Auto-generated method stub
-		return null;
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		List<Student> studentList = new ArrayList<>();
+		Query query = session.createNamedQuery("SELECT * FROM student");
+		studentList = query.getResultList();
+		transaction.commit();
+		session.close();
+		return studentList;
 	}
 
 }
