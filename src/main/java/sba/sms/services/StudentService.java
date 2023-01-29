@@ -3,9 +3,12 @@ package sba.sms.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.hibernate.*;
+
 import sba.sms.dao.StudentI;
 import sba.sms.models.Course;
 import sba.sms.models.Student;
+import sba.sms.utils.HibernateUtil;
 /*TODO:
  * Implement StudentI
  * fill out methods (dont forget to try/catch/finally)
@@ -19,52 +22,51 @@ import sba.sms.models.Student;
 public class StudentService implements StudentI {
 	private static final CourseService courseService = new CourseService();
 
-
 	@Override
 	public void createStudent(Student student) {
 		// TODO Auto-generated method stub
 		/*
-		 * create new transaction object
-		 * create new session object
-		 * begin transaction
-		 * create query to insert data into DB
-		 * commit transaction
-		 * catch errors
-		 * no return data
+		 * create new transaction object create new session object begin transaction
+		 * create query to insert data into DB commit transaction catch errors no return
+		 * data
 		 */
-		
+		// these three lines can be used for any DB call
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		session.persist(student);
+		transaction.commit();
+		session.close();
+		// come back to catch errors later
 	}
 
-	public boolean validateStudent(String email, String password) { //checks for correct student-password relationship
+	public boolean validateStudent(String email, String password) { // checks for correct student-password relationship
 		// TODO Auto-generated method stub
 		/*
-		 * create new Student object
-		 * create new transaction object
-		 * create new session object
-		 * begin transaction
-		 * create query
-		 * fill Student object with data
-		 * check if data from object matches data input from user
-		 * commit transaction
-		 * return boolean vaule based on result
+		 * create new Student object create new transaction object create new session
+		 * object begin transaction create query fill Student object with data check if
+		 * data from object matches data input from user commit transaction return
+		 * boolean value based on result
 		 * 
 		 */
-		
-		return false;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		Student student = new Student();
+		if (student.getPassword() == password) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public Student getStudentByEmail(String email) {
 		// TODO Auto-generated method stub
-		
+
 		/*
-		 * create new Student object
-		 * create new transaction object
-		 * create new session object
-		 * begin transaction
-		 * create query
-		 * fill Student object with data
-		 * commit transaction
-		 * return Student data
+		 * create new Student object create new transaction object create new session
+		 * object begin transaction create query fill Student object with data commit
+		 * transaction return Student data
 		 * 
 		 */
 		return null;
@@ -73,30 +75,18 @@ public class StudentService implements StudentI {
 	public void registerStudentToCourse(String email, int i) {
 		// TODO Auto-generated method stub
 		/*
-		 * create session
-		 * create transaction object
-		 * being transaction
-		 * create query
-		 * insert data into DB
-		 * commit transaction
-		 * catch errors
-		 * no returns
+		 * create session create transaction object being transaction create query
+		 * insert data into DB commit transaction catch errors no returns
 		 */
-		
+
 	}
 
 	public List<Course> getStudentCourses(String email) {
 		// TODO Auto-generated method stub
 		/*
-		 * create new course list to pass back from method
-		 * create session
-		 * create transaction object
-		 * begin transaction
-		 * create query
-		 * fill course list with results
-		 * commit transaction
-		 * catch errors
-		 * return data
+		 * create new course list to pass back from method create session create
+		 * transaction object begin transaction create query fill course list with
+		 * results commit transaction catch errors return data
 		 */
 		return null;
 	}
@@ -104,15 +94,9 @@ public class StudentService implements StudentI {
 	@Override
 	public List<Student> getAllStudents() {
 		/*
-		 * create new student list to pass back from method
-		 * create session
-		 * create transaction object
-		 * begin transaction
-		 * create query
-		 * fill student list with results
-		 * commit transaction
-		 * catch errors
-		 * return data
+		 * create new student list to pass back from method create session create
+		 * transaction object begin transaction create query fill student list with
+		 * results commit transaction catch errors return data
 		 */
 		// TODO Auto-generated method stub
 		return null;
