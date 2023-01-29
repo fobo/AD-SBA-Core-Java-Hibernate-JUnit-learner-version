@@ -90,7 +90,15 @@ public class StudentService implements StudentI {
 		 * create session create transaction object being transaction create query
 		 * insert data into DB commit transaction catch errors no returns
 		 */
-
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		Student student = new Student();
+		Query query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email");
+		query.setParameter("email", email);
+		student = (Student) query.getSingleResult();
+		session.merge(student);
+		session.close();
 	}
 	@Override
 	public List<Course> getStudentCourses(String email) {
@@ -100,6 +108,10 @@ public class StudentService implements StudentI {
 		 * transaction object begin transaction create query fill course list with
 		 * results commit transaction catch errors return data
 		 */
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		//just found this: https://www.tutorialspoint.com/hibernate/hibernate_native_sql.htm come to it later...
 		return null;
 	}
 
