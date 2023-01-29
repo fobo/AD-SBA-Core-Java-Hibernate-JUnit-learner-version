@@ -23,7 +23,7 @@ import sba.sms.utils.HibernateUtil;
  * 
  */
 public class CourseService implements CourseI {
-
+	@Override
 	public List<Course> getAllCourses() {
 		List<Course> courseList = new ArrayList<>();
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -36,14 +36,28 @@ public class CourseService implements CourseI {
 		// TODO Auto-generated method stub
 		return courseList;
 	}
-
+	@Override
 	public Course getCourseById(int courseId) {
 		// TODO Auto-generated method stub
-		return null;
+		Course course = new Course();
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		TypedQuery<Course> query = session.createNamedQuery("SELECT * FROM course WHERE course.id = :id", Course.class);
+		course = query.getSingleResult();
+		transaction.commit();
+		session.close();
+		return course;
 	}
-
+	@Override
 	public void createCourse(Course course) {
 		// TODO Auto-generated method stub
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		session.persist(course);
+		transaction.commit();
+		session.close();
 		
 	}
 
