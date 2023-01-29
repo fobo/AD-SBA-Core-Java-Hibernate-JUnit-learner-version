@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.hibernate.*;
 
+import jakarta.persistence.*;
 import sba.sms.dao.StudentI;
 import sba.sms.models.Course;
 import sba.sms.models.Student;
@@ -39,7 +40,7 @@ public class StudentService implements StudentI {
 		session.close();
 		// come back to catch errors later
 	}
-
+	@Override
 	public boolean validateStudent(String email, String password) { // checks for correct student-password relationship
 		// TODO Auto-generated method stub
 		/*
@@ -53,13 +54,14 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		Student student = new Student();
+		session.close();
 		if (student.getPassword() == password) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-
+	@Override
 	public Student getStudentByEmail(String email) {
 		// TODO Auto-generated method stub
 
@@ -69,9 +71,19 @@ public class StudentService implements StudentI {
 		 * transaction return Student data
 		 * 
 		 */
-		return null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = null;
+		transaction = session.beginTransaction();
+		Student student = new Student();
+		Query query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email"); //deprecated? Unsure what else to use here
+		query.setParameter("email", email);
+		student = (Student) query.getSingleResult();
+		transaction.commit();
+		session.close();
+		
+		return student;
 	}
-
+	@Override
 	public void registerStudentToCourse(String email, int i) {
 		// TODO Auto-generated method stub
 		/*
@@ -80,7 +92,7 @@ public class StudentService implements StudentI {
 		 */
 
 	}
-
+	@Override
 	public List<Course> getStudentCourses(String email) {
 		// TODO Auto-generated method stub
 		/*
