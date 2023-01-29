@@ -76,9 +76,9 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		Student student = new Student();
-		Query query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email"); //deprecated? Unsure what else to use here
+		TypedQuery<Student> query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email", Student.class); //deprecated? Unsure what else to use here
 		query.setParameter("email", email);
-		student = (Student) query.getSingleResult();
+		student = query.getSingleResult();
 		transaction.commit();
 		session.close();
 		
@@ -95,9 +95,9 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		Student student = new Student();
-		Query query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email");
+		TypedQuery<Student> query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email", Student.class);
 		query.setParameter("email", email);
-		student = (Student) query.getSingleResult();
+		student = query.getSingleResult();
 		session.merge(student);
 		session.close();
 	}
@@ -113,7 +113,7 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		List<Course> courseList = new ArrayList<>();
-		Query query = session.createNamedQuery("SELECT course.id, course.name, course.instructor FROM course join student_courses on course.id = student_courses.courses_id join student on student.email = student_courses.student_email where student.email = :email");
+		TypedQuery<Course> query = session.createNamedQuery("SELECT course.id, course.name, course.instructor FROM course join student_courses on course.id = student_courses.courses_id join student on student.email = student_courses.student_email where student.email = :email", Course.class);
 		query.setParameter("email", email);
 		courseList = query.getResultList();
 		transaction.commit();
@@ -135,7 +135,7 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		List<Student> studentList = new ArrayList<>();
-		Query query = session.createNamedQuery("SELECT * FROM student");
+		TypedQuery<Student> query = session.createNamedQuery("SELECT * FROM student", Student.class);
 		studentList = query.getResultList();
 		transaction.commit();
 		session.close();
