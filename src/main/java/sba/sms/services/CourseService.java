@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -29,7 +30,7 @@ public class CourseService implements CourseI {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
-		TypedQuery<Course> query = session.createNamedQuery("SELECT * FROM course", Course.class);
+		TypedQuery<Course> query = session.createQuery("FROM Course", Course.class);
 		courseList = query.getResultList();
 		transaction.commit();
 		session.close();
@@ -43,7 +44,8 @@ public class CourseService implements CourseI {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
-		TypedQuery<Course> query = session.createNamedQuery("SELECT * FROM course WHERE course.id = :id", Course.class);
+		TypedQuery<Course> query = session.createQuery("FROM Course WHERE id = :id", Course.class);
+		query.setParameter("id", courseId);
 		course = query.getSingleResult();
 		transaction.commit();
 		session.close();
@@ -54,10 +56,18 @@ public class CourseService implements CourseI {
 		// TODO Auto-generated method stub
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
-		transaction = session.beginTransaction();
-		session.persist(course);
-		transaction.commit();
-		session.close();
+		try {
+			transaction = session.beginTransaction();
+			session.persist(course);
+			transaction.commit();
+		} catch (HibernateException exception) {
+			if (transaction != null) {
+				transaction.rollback();
+				exception.printStackTrace();
+			}
+		} finally {
+			session.close();
+		}
 		
 	}
 

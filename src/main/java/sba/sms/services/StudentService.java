@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.hibernate.*;
+import org.hibernate.query.NativeQuery;
 
 import jakarta.persistence.*;
 import sba.sms.dao.StudentI;
@@ -22,7 +23,7 @@ import sba.sms.utils.HibernateUtil;
  */
 
 public class StudentService implements StudentI {
-	private static final CourseService courseService = new CourseService();
+	// private static final CourseService courseService = new CourseService();
 
 	@Override
 	public void createStudent(Student student) {
@@ -35,12 +36,22 @@ public class StudentService implements StudentI {
 		// these three lines can be used for any DB call
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
-		transaction = session.beginTransaction();
-		session.persist(student);
-		transaction.commit();
-		session.close();
-		// come back to catch errors later
+		try {
+			transaction = session.beginTransaction();
+			session.persist(student);
+			transaction.commit();
+			// come back to catch errors later
+		} catch (HibernateException exception) {
+			if (transaction != null) {
+				transaction.rollback();
+				exception.printStackTrace();
+			}
+		} finally {
+			session.close();
+		}
+		// TODO: handle finally clause
 	}
+
 	@Override
 	public boolean validateStudent(String email, String password) { // checks for correct student-password relationship
 		// TODO Auto-generated method stub
@@ -55,13 +66,18 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		Student student = new Student();
+		TypedQuery<Student> query = session.createQuery("FROM Student WHERE email = :email", Student.class);
+		query.setParameter("email", email);
+		student = query.getSingleResult();
 		session.close();
-		if (student.getPassword() == password) {
+		if (student.getPassword().equals(password)) {
 			return true;
 		} else {
+			System.out.println(student.getPassword() + password);
 			return false;
 		}
 	}
+
 	@Override
 	public Student getStudentByEmail(String email) {
 		// TODO Auto-generated method stub
@@ -74,16 +90,25 @@ public class StudentService implements StudentI {
 		 */
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
-		transaction = session.beginTransaction();
 		Student student = new Student();
-		TypedQuery<Student> query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email", Student.class); //deprecated? Unsure what else to use here
-		query.setParameter("email", email);
-		student = query.getSingleResult();
-		transaction.commit();
-		session.close();
-		
+		try {
+			transaction = session.beginTransaction();
+			TypedQuery<Student> query = session.createQuery("FROM Student WHERE email = :email", Student.class);
+			query.setParameter("email", email);
+			student = query.getSingleResult();
+			transaction.commit();
+
+		} catch (HibernateException exception) {
+			if (transaction != null) {
+				transaction.rollback();
+				exception.printStackTrace();
+			}
+		} finally {
+			session.close();
+		}
 		return student;
 	}
+
 	@Override
 	public void registerStudentToCourse(String email, int i) {
 		// TODO Auto-generated method stub
@@ -95,12 +120,14 @@ public class StudentService implements StudentI {
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		Student student = new Student();
-		TypedQuery<Student> query = session.createNamedQuery("SELECT * FROM Student WHERE email = :email", Student.class);
+		TypedQuery<Student> query = session.createQuery("FROM Student WHERE email = :email",
+				Student.class);
 		query.setParameter("email", email);
 		student = query.getSingleResult();
 		session.merge(student);
 		session.close();
 	}
+
 	@Override
 	public List<Course> getStudentCourses(String email) {
 		// TODO Auto-generated method stub
@@ -109,16 +136,30 @@ public class StudentService implements StudentI {
 		 * transaction object begin transaction create query fill course list with
 		 * results commit transaction catch errors return data
 		 */
+		List<Course> courseList = new ArrayList<>();
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
-		transaction = session.beginTransaction();
-		List<Course> courseList = new ArrayList<>();
-		TypedQuery<Course> query = session.createNamedQuery("SELECT course.id, course.name, course.instructor FROM course join student_courses on course.id = student_courses.courses_id join student on student.email = student_courses.student_email where student.email = :email", Course.class);
-		query.setParameter("email", email);
-		courseList = query.getResultList();
-		transaction.commit();
-		session.close();
-		//just found this: https://www.tutorialspoint.com/hibernate/hibernate_native_sql.htm come to it later...
+		try {
+			transaction = session.beginTransaction();
+
+			NativeQuery<Course> query = session.createNativeQuery(
+					"SELECT course.id, course.name, course.instructor FROM course join student_courses on course.id = student_courses.courses_id join student on student.email = student_courses.student_email where student.email = :email",
+					Course.class);
+			query.setParameter("email", email);
+			courseList = query.getResultList();
+			transaction.commit();
+			session.close();
+		} catch (HibernateException exception) {
+			if (transaction != null) {
+				transaction.rollback();
+				exception.printStackTrace();
+			}
+		} finally {
+			session.close();
+		}
+		// just found this:
+		// https://www.tutorialspoint.com/hibernate/hibernate_native_sql.htm come to it
+		// later...
 		return courseList;
 	}
 
@@ -130,12 +171,12 @@ public class StudentService implements StudentI {
 		 * results commit transaction catch errors return data
 		 */
 		// TODO Auto-generated method stub
-		
+
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = null;
 		transaction = session.beginTransaction();
 		List<Student> studentList = new ArrayList<>();
-		TypedQuery<Student> query = session.createNamedQuery("SELECT * FROM student", Student.class);
+		TypedQuery<Student> query = session.createQuery("SELECT * FROM Student", Student.class);
 		studentList = query.getResultList();
 		transaction.commit();
 		session.close();
