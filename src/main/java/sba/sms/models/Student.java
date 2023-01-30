@@ -84,6 +84,11 @@ public class Student {
 		return Objects.equals(email, other.email) && Objects.equals(name, other.name)
 				&& Objects.equals(password, other.password);
 	}
+	//helper method to add a course to a students list of courses
+	public void registerCourse(Course course) {
+		this.courses.add(course); //adds course to student
+		course.getStudents().add(this); //adds student to course
+	}
 
 
 	// getters and setters

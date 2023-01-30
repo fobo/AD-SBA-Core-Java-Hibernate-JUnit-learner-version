@@ -32,6 +32,7 @@ public class CourseService implements CourseI {
 		transaction = session.beginTransaction();
 		TypedQuery<Course> query = session.createQuery("FROM Course", Course.class);
 		courseList = query.getResultList();
+		courseList.toString();
 		transaction.commit();
 		session.close();
 		// TODO Auto-generated method stub

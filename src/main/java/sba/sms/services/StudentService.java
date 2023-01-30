@@ -23,7 +23,7 @@ import sba.sms.utils.HibernateUtil;
  */
 
 public class StudentService implements StudentI {
-	// private static final CourseService courseService = new CourseService();
+	private static final CourseService courseService = new CourseService();
 
 	@Override
 	public void createStudent(Student student) {
@@ -124,6 +124,7 @@ public class StudentService implements StudentI {
 				Student.class);
 		query.setParameter("email", email);
 		student = query.getSingleResult();
+		student.registerCourse(courseService.getCourseById(i));
 		session.merge(student);
 		session.close();
 	}
@@ -142,13 +143,29 @@ public class StudentService implements StudentI {
 		try {
 			transaction = session.beginTransaction();
 
+			
+			/*
+			 * SELECT course.id, course.name, course.instructor
+			 * FROM course
+			 * JOIN student_courses
+			 * ON course.id = student_courses.coursee_id
+			 * JOIN student
+			 * ON student.email = student_courses.student_email
+			 * WHERE student.email = :email
+			 */
 			NativeQuery<Course> query = session.createNativeQuery(
-					"SELECT course.id, course.name, course.instructor FROM course join student_courses on course.id = student_courses.courses_id join student on student.email = student_courses.student_email where student.email = :email",
+					"SELECT course.id, course.name, course.instructor" + 
+					" FROM course join student_courses "+
+					"ON course.id = student_courses.courses_id "+
+					"JOIN student "+
+					"ON student.email = student_courses.student_email "+
+					"WHERE student.email = :email",
 					Course.class);
 			query.setParameter("email", email);
 			courseList = query.getResultList();
+			courseList.toString();
 			transaction.commit();
-			session.close();
+			
 		} catch (HibernateException exception) {
 			if (transaction != null) {
 				transaction.rollback();
