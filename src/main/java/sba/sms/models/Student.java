@@ -1,5 +1,6 @@
 package sba.sms.models;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,8 +46,8 @@ public class Student {
 	@ToString.Exclude
 	@ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
 	@JoinTable(name = "student_courses", joinColumns = @JoinColumn(name = "student_email"), inverseJoinColumns = @JoinColumn(name = "courses_id"))
-	private List<Course> courses;
-
+	//private List<Course> courses;
+	List<Course> courses = new LinkedList<Course>();
 	// constructors
 	public Student() {
 	}
@@ -89,6 +90,8 @@ public class Student {
 		this.courses.add(course); //adds course to student
 		course.getStudents().add(this); //adds student to course
 	}
+
+
 
 
 	// getters and setters

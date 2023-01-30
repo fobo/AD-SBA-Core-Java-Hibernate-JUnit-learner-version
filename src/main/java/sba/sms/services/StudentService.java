@@ -1,6 +1,7 @@
 package sba.sms.services;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -23,7 +24,7 @@ import sba.sms.utils.HibernateUtil;
  */
 
 public class StudentService implements StudentI {
-	private static final CourseService courseService = new CourseService();
+	//private static final CourseService courseService = new CourseService();
 
 	@Override
 	public void createStudent(Student student) {
@@ -116,68 +117,67 @@ public class StudentService implements StudentI {
 		 * create session create transaction object being transaction create query
 		 * insert data into DB commit transaction catch errors no returns
 		 */
-		Session session = HibernateUtil.getSessionFactory().openSession();
+//		Session session = HibernateUtil.getSessionFactory().openSession();
+//		Transaction transaction = null;
+//		transaction = session.beginTransaction();
+//		Student student = new Student();
+//		TypedQuery<Student> query = session.createQuery("FROM Student WHERE email = :email", Student.class);
+//		query.setParameter("email", email);
+//		student = query.getSingleResult();
+//		student.registerCourse(courseService.getCourseById(i));
+//		session.merge(student);
+//		session.close();
 		Transaction transaction = null;
-		transaction = session.beginTransaction();
-		Student student = new Student();
-		TypedQuery<Student> query = session.createQuery("FROM Student WHERE email = :email",
-				Student.class);
-		query.setParameter("email", email);
-		student = query.getSingleResult();
-		student.registerCourse(courseService.getCourseById(i));
-		session.merge(student);
-		session.close();
-	}
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            Student student = session.get(Student.class, email);
+            Course course = session.get(Course.class, i);
 
-	@Override
-	public List<Course> getStudentCourses(String email) {
-		// TODO Auto-generated method stub
-		/*
-		 * create new course list to pass back from method create session create
-		 * transaction object begin transaction create query fill course list with
-		 * results commit transaction catch errors return data
-		 */
-		List<Course> courseList = new ArrayList<>();
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction transaction = null;
-		try {
-			transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
+            List<Course> courseList = student.getCourses();
+            if (!courseList.contains(course)) {
+                student.registerCourse(course);
+                session.persist(student);
+            }
 
-			
-			/*
-			 * SELECT course.id, course.name, course.instructor
-			 * FROM course
-			 * JOIN student_courses
-			 * ON course.id = student_courses.coursee_id
-			 * JOIN student
-			 * ON student.email = student_courses.student_email
-			 * WHERE student.email = :email
-			 */
-			NativeQuery<Course> query = session.createNativeQuery(
-					"SELECT course.id, course.name, course.instructor" + 
-					" FROM course join student_courses "+
-					"ON course.id = student_courses.courses_id "+
-					"JOIN student "+
-					"ON student.email = student_courses.student_email "+
-					"WHERE student.email = :email",
-					Course.class);
-			query.setParameter("email", email);
-			courseList = query.getResultList();
-			courseList.toString();
-			transaction.commit();
-			
+
+            transaction.commit();
+
 		} catch (HibernateException exception) {
 			if (transaction != null) {
 				transaction.rollback();
 				exception.printStackTrace();
 			}
 		} finally {
-			session.close();
-		}
-		// just found this:
-		// https://www.tutorialspoint.com/hibernate/hibernate_native_sql.htm come to it
-		// later...
-		return courseList;
+            session.close();
+        }
+	}
+
+	@Override
+	public List<Course> getStudentCourses(String email) {
+
+		Transaction transaction = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        List<Course> courseList = null;
+        try {
+        	transaction = session.beginTransaction();
+            Student student = session.get(Student.class, email);
+
+
+            courseList = student.getCourses();
+            transaction.commit();
+
+		} catch (HibernateException exception) {
+			if (transaction != null) {
+				transaction.rollback();
+				exception.printStackTrace();
+			}
+		} finally {
+            session.close();
+        }
+        return courseList;
+
 	}
 
 	@Override
